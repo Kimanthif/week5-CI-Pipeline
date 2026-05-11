@@ -1,7 +1,5 @@
 pipeline {
-    agent {
-       any()
-    }
+    agent any
 
     environment {
         NEXUS_URL = "http://localhost:8081"
