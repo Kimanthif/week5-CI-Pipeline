@@ -41,7 +41,7 @@ pipeline {
 
         stage('Lint') {
             steps {
-                sh 'npm run lint || echo "No lint script found - skipping"'
+                sh 'npm run lint || echo "Lint not configured, continuing pipeline"'
             }
         }
 
