@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        NEXUS_URL = "http://localhost:8081"
+        NEXUS_URL = "http://172.17.0.1:8081"
         NEXUS_REPO = "kijanikiosk-payments"
         NEXUS_CREDENTIALS_ID = "nexus-creds"
 
