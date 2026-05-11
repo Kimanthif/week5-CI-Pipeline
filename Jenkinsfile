@@ -1,10 +1,10 @@
 pipeline {
     agent {
-    docker {
-        image 'node:18-alpine'
-        args '-u root:root'
+        docker {
+             image 'node:18-alpine'
+             args '-u root:root'
+        }
     }
-}
 
     environment {
         NEXUS_URL = "http://localhost:8081"
