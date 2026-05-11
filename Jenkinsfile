@@ -74,32 +74,34 @@ pipeline {
             }
         }
 
-        stage('Publish to Nexus') {
-            steps {
-                withCredentials([usernamePassword(
-                    credentialsId: "${NEXUS_CREDENTIALS_ID}",
-                    usernameVariable: 'NEXUS_USER',
-                    passwordVariable: 'NEXUS_PASS'
-                )]) {
+stage('Publish to Nexus') {
+    steps {
+        withCredentials([usernamePassword(
+            credentialsId: "${NEXUS_CREDENTIALS_ID}",
+            usernameVariable: 'NEXUS_USER',
+            passwordVariable: 'NEXUS_PASS'
+        )]) {
 
-                    sh """
-                        echo "Preparing package version ${VERSION}"
+            sh '''
+                echo "Preparing package version ${VERSION}"
 
-                        npm version ${VERSION} --no-git-tag-version
+                npm version ${VERSION} --no-git-tag-version
 
-                        cat > .npmrc <<EOF
+                AUTH=$(echo -n "$NEXUS_USER:$NEXUS_PASS" | base64)
+
+                cat > .npmrc <<EOF
 registry=${NEXUS_URL}/repository/${NEXUS_REPO}/
-_auth=\$(echo -n $NEXUS_USER:$NEXUS_PASS | base64)
+//localhost:8081/repository/${NEXUS_REPO}/:_auth=${AUTH}
+always-auth=true
 EOF
 
-                        npm publish --registry ${NEXUS_URL}/repository/${NEXUS_REPO}/
+                npm publish --registry ${NEXUS_URL}/repository/${NEXUS_REPO}/
 
-                        rm -f .npmrc
-                    """
-                }
-            }
+                rm -f .npmrc
+            '''
         }
     }
+}
 
     post {
 
