@@ -38,3 +38,12 @@ These capabilities are typically introduced in later stages of system maturity o
 ### Closing Perspective
 
 This pipeline acts as a controlled pathway between development and release. It ensures that every change is reviewed, tested, and verified before it becomes part of a shared software version. The goal is not speed alone, but confidence — ensuring that every published version of KijaniKiosk can be trusted by both engineers and business stakeholders.
+
+### Jenkins Pipeline Success
+
+
+![Jenkins Success](screenshots/JENKINS-UI.png)
+
+### Nexus Artifact
+
+![Nexus Artifact](screenshots/NEXUS-UI.png)
