@@ -1,13 +1,13 @@
 pipeline {
     agent {
         docker {
-            image 'node:18-alpine'   // pinned, NOT latest
+            image 'node:18-alpine'   // pinned image
             args '-u root:root'
         }
     }
 
     environment {
-        NEXUS_URL = "http://172.17.0.1:8081"
+        NEXUS_URL = "http://localhost:8081"
         NEXUS_REPO = "kijanikiosk-payments"
         NEXUS_CREDENTIALS_ID = "nexus-creds"
 
@@ -37,7 +37,7 @@ pipeline {
 
         stage('Lint') {
             steps {
-                sh 'npm run lint || true'
+                sh 'npm run lint'
             }
         }
 
@@ -58,7 +58,7 @@ pipeline {
 
                 stage('Security Audit') {
                     steps {
-                        sh 'npm audit --audit-level=high || true'
+                        sh 'npm audit --audit-level=high'
                     }
                 }
             }
@@ -85,7 +85,7 @@ pipeline {
 
                         cat > .npmrc <<EOF
 registry=${NEXUS_URL}/repository/${NEXUS_REPO}/
-//172.17.0.1:8081/repository/${NEXUS_REPO}/:_auth=\$(echo -n $NEXUS_USER:$NEXUS_PASS | base64)
+_auth=\$(echo -n $NEXUS_USER:$NEXUS_PASS | base64)
 EOF
 
                         npm publish --registry ${NEXUS_URL}/repository/${NEXUS_REPO}/
