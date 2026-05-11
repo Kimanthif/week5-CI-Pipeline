@@ -99,9 +99,9 @@ pipeline {
 
                         rm -f .npmrc
                 '''
-        }
+             }
+         }
     }
-}
 
     post {
 
