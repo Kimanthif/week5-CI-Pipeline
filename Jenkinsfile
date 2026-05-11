@@ -1,9 +1,6 @@
 pipeline {
     agent {
-        docker {
-            image 'node:18-alpine'   // pinned image
-            args '-u root:root'
-        }
+       any
     }
 
     environment {
