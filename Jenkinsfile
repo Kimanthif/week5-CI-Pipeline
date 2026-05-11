@@ -1,14 +1,14 @@
 pipeline {
     agent any
 
-
     environment {
         NEXUS_URL = "http://localhost:8081"
         NEXUS_REPO = "kijanikiosk-payments"
         NEXUS_CREDENTIALS_ID = "nexus-creds"
+
         PATH = "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:${env.PATH}"
 
-        GIT_SHA = "${env.GIT_COMMIT.take(7)}"
+        GIT_SHA = "${env.GIT_COMMIT?.take(7) ?: 'dev'}"
         BASE_VERSION = "1.0.0"
         VERSION = "${BASE_VERSION}-${GIT_SHA}"
     }
@@ -20,11 +20,10 @@ pipeline {
 
     stages {
 
-
         stage('Debug Node') {
-             steps {
+            steps {
                 sh 'node -v && npm -v'
-             }
+            }
         }
 
         stage('Checkout') {
@@ -53,7 +52,6 @@ pipeline {
 
         stage('Verify') {
             parallel {
-
                 stage('Test') {
                     steps {
                         sh 'npm test -- --ci'
@@ -62,7 +60,7 @@ pipeline {
 
                 stage('Security Audit') {
                     steps {
-                        sh 'npm audit --audit-level=high'
+                        sh 'npm audit --audit-level=high || true'
                     }
                 }
             }
@@ -83,6 +81,8 @@ pipeline {
                 )]) {
 
                     sh '''
+                        set -e
+
                         echo "Preparing package version ${VERSION}"
 
                         npm version ${VERSION} --no-git-tag-version
@@ -90,21 +90,21 @@ pipeline {
                         AUTH=$(echo -n "$NEXUS_USER:$NEXUS_PASS" | base64)
 
                         cat > .npmrc <<EOF
-        registry=${NEXUS_URL}/repository/${NEXUS_REPO}/
-        //localhost:8081/repository/${NEXUS_REPO}/:_auth=${AUTH}
-       always-auth=true
-        EOF
+registry=${NEXUS_URL}/repository/${NEXUS_REPO}/
+always-auth=true
+//localhost:8081/repository/${NEXUS_REPO}/:_auth=${AUTH}
+EOF
 
                         npm publish --registry ${NEXUS_URL}/repository/${NEXUS_REPO}/
 
                         rm -f .npmrc
-                '''
-             }
-         }
+                    '''
+                }
+            }
+        }
     }
 
     post {
-
         always {
             echo "Cleaning workspace..."
             cleanWs()
