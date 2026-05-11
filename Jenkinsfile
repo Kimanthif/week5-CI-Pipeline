@@ -1,11 +1,12 @@
 pipeline {
     agent any
-    
+
 
     environment {
         NEXUS_URL = "http://localhost:8081"
         NEXUS_REPO = "kijanikiosk-payments"
         NEXUS_CREDENTIALS_ID = "nexus-creds"
+        PATH = "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:${env.PATH}"
 
         GIT_SHA = "${env.GIT_COMMIT.take(7)}"
         BASE_VERSION = "1.0.0"
@@ -18,6 +19,13 @@ pipeline {
     }
 
     stages {
+
+
+        stage('Debug Node') {
+             steps {
+                sh 'node -v && npm -v'
+             }
+        }
 
         stage('Checkout') {
             steps {
