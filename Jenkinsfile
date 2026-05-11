@@ -87,18 +87,19 @@ pipeline {
 
                         npm version ${VERSION} --no-git-tag-version
 
-                        echo "Creating .npmrc authentication file"
+                        echo "Creating .npmrc"
 
                         cat > .npmrc <<EOF
-registry=http://172.17.0.1:8081/repository/kijanikiosk-payments/
-//172.17.0.1:8081/repository/kijanikiosk-payments/:_auth=\${NEXUS_USER}:\${NEXUS_PASS}
-//172.17.0.1:8081/repository/kijanikiosk-payments/:username=\${NEXUS_USER}
-//172.17.0.1:8081/repository/kijanikiosk-payments/:password=\${NEXUS_PASS}
+registry=${NEXUS_URL}/repository/${NEXUS_REPO}/
 always-auth=true
 EOF
 
+                        echo "//172.17.0.1:8081/repository/${NEXUS_REPO}/:_auth=$(echo -n $NEXUS_USER:$NEXUS_PASS | base64)" >> .npmrc
+                        
                         echo "Publishing package to Nexus..."
-                        npm publish --registry http://172.17.0.1:8081/repository/kijanikiosk-payments/
+                        npm publish --registry ${NEXUS_URL}/repository/${NEXUS_REPO}/
+
+                        rm -f .npmrc
 
                     '''
                 }
