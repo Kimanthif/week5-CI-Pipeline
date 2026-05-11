@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        NEXUS_URL = "http://172.17.0.1:8081"
+        NEXUS_URL = "http://nexus:8081"
         NEXUS_REPO = "kijanikiosk-payments"
         NEXUS_CREDENTIALS_ID = "nexus-creds"
 
@@ -94,7 +94,7 @@ registry=${NEXUS_URL}/repository/${NEXUS_REPO}/
 always-auth=true
 EOF
 
-                        echo "//172.17.0.1:8081/repository/${NEXUS_REPO}/:_auth=$(echo -n $NEXUS_USER:$NEXUS_PASS | base64)" >> .npmrc
+                        echo "//nexus:8081/repository/${NEXUS_REPO}/:_auth=$(echo -n $NEXUS_USER:$NEXUS_PASS | base64)" >> .npmrc
                         
                         echo "Publishing package to Nexus..."
                         npm publish --registry ${NEXUS_URL}/repository/${NEXUS_REPO}/
